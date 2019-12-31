@@ -34,18 +34,18 @@ class BinaryTree:
             if node:
                 func(node)
                 arr.append(node.val)
-                self.__trecs__(node.lc, level + 1, method, func)
-                self.__trecs__(node.rc, level + 1, method, func)
+                self.__trecs__(node.lc, arr, level + 1, method, func)
+                self.__trecs__(node.rc, arr, level + 1, method, func)
         elif method == 'inorder':
             if node:
-                self.__trecs__(node.lc, level + 1, method, func)
+                self.__trecs__(node.lc, arr, level + 1, method, func)
                 func(node)
                 arr.append(node.val)
-                self.__trecs__(node.rc, level + 1, method, func)
+                self.__trecs__(node.rc, arr, level + 1, method, func)
         elif method == 'postorder':
             if node:
-                self.__trecs__(node.lc, level + 1, method, func)
-                self.__trecs__(node.rc, level + 1, method, func)
+                self.__trecs__(node.lc, arr, level + 1, method, func)
+                self.__trecs__(node.rc, arr, level + 1, method, func)
                 func(node)
                 arr.append(node.val)
         else:
@@ -179,38 +179,3 @@ class BST(BinaryTree):
         for val in arr:
             self.addnode(val)
 
-
-def main():
-    """
-    arr = list(range(1,16))
-    tree = Tree()
-    tree.root = BSTFromSortedArr(arr,0,len(arr)-1)
-    tree.traverseRec(func=lvlprint)
-    """
-    # nlist, plist = tree.BFS()
-    # for node,parent in zip(nlist,plist):
-    #    print(node.val, parent.val)
-
-    # tree.traverseRec('postorder')
-    # tree.traverseIter('postorder')
-
-    # tree = coolBSTree1()
-    # print(getNodeHeight(tree.root))
-    # print(isBalanced1(tree.root))
-    # print(isBalanced2(tree.root))
-    # print(isBST(tree.root,None,None))
-    # tree.traverseRec(func=lvlprint)
-    # nlist, plist = tree.BFS()
-    # for node,parent in zip(nlist,plist):
-    #    print(node.val, parent.val)
-
-    tree, tn1, tn2 = Btree2Node()
-    # ans = CommonAncestor1(tree.root,tn1,tn2)
-    # print(ans.val)
-    # ans2 = CommonAncestor2(tree.root,tn1,tn2)
-    # print(ans2.val)
-    tree.BFS()
-
-
-if __name__ == '__main__':
-    main()

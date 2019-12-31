@@ -1,16 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Created on Fri Feb  8 15:53:35 2019
-
-@author: illuminatus
-"""
 
 
-class Node:
-    def __init__(self, data):
+class ListNode:
+    def __init__(self, data, pnext = None):
         self.data = data
-        self.next = None
+        self.next = pnext
 
 
 class SLL:
@@ -18,13 +13,13 @@ class SLL:
         self.head = None
         self.len = 0
 
-    def __setLen__(self):
-        if self.head == None:
+    def __setlen__(self):
+        if self.head is None:
             self.len = 0
 
         current = self.head
         ctr = 0
-        while current != None:
+        while current is not None:
             ctr += 1
             current = current.next
         self.len = ctr
@@ -35,9 +30,9 @@ class SLL:
             print(curr.data)
             curr = curr.next
 
-    def addNode(self, data, pos):
+    def add_node(self, data, pos):
         # Node that position starts from 1, not 0.
-        node = Node(data)
+        node = ListNode(data)
         if pos == 1:
             node.next = self.head
             self.head = node
@@ -54,31 +49,27 @@ class SLL:
             current.next = node
             self.len += 1
 
-    def deleteNode(self, pos):
+    def delete_node(self, pos):
         current = self.head
         prev = None
         if self.len == 0:
             print("SLL empty.")
-
-        if self.len == 1:
-            del current
-            self.head = None
-            self.len = 0
-
+            return
         if pos == 1:
             self.head = current.next
             self.len -= 1
             del current
-
+            return
         if pos > self.len:
-            print("LL too short. ")
-
+            print("Out of range.")
+            return
         ctr = 1
         while current is not None and ctr < pos:
             prev = current
             current = current.next
             ctr += 1
         prev.next = current.next
+        self.len -= 1
         del current
 
     def assign(self, node):
@@ -88,12 +79,12 @@ class SLL:
         this function has been written to package that with assignment. 
         """
         self.head = node
-        self.__setLen__()
+        self.__setlen__()
 
-    def createSLL(self, arr):
+    def create_sll(self, arr):
         pos = 1
         for val in arr:
-            self.addNode(val, pos)
+            self.add_node(val, pos)
             pos += 1
 
     def __rev_iter__(self, head):
@@ -120,27 +111,3 @@ class SLL:
             self.head = self.__rev_rec__(self.head)
         else:
             self.head = self.__rev_iter__(self.head)
-
-
-def main():
-    n1 = Node(1); n2 = Node(2); n3 = Node(3)
-    SLL1 = SLL()
-    # SLL1.addNode(n1,1)
-    # SLL1.addNode(n2,2)
-    # SLL1.addNode(n3,3)
-
-    n1.next = n2;
-    n2.next = n3;
-    n3.next = Node(4)
-    SLL1.assign(n1)
-    print("Len:", SLL1.len)
-    # SLL1.deleteNode(3)
-    SLL1.print_()
-    SLL1.head = reverseSLLRec(SLL1.head)
-    SLL1.print_()
-    SLL1.head = reverseSLL(SLL1.head)
-    SLL1.print_()
-
-
-if __name__ == '__main__':
-    main()

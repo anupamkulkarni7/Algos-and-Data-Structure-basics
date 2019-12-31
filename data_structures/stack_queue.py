@@ -37,10 +37,7 @@ class myStack():
                 print (node.val)
             else:
                 print(None)
-    
 
-
-#   --------------------------------------------------------------------------
 
 class StackWMin():
     
@@ -57,7 +54,7 @@ class StackWMin():
             print("Stack empty.")
             return
     
-    def push(self,val):
+    def push(self, val):
         if len(self.data) == 0:
             self.min.append(val)
             return self.data.append(val)
@@ -87,8 +84,7 @@ class SetOfStacks():
         self.stackList = [myStack()]
         self.maxSize = maxSize
         self.indx = 0
-    
-    
+
     def push(self, val):
         if self.stackList[self.indx].size() < self.maxSize:
             self.stackList[self.indx].push(val)
@@ -96,8 +92,7 @@ class SetOfStacks():
             self.stackList.append(myStack())
             self.indx += 1
             self.stackList[self.indx].push(val)
-    
-    
+
     def pop(self):
         
         if self.stackList[self.indx].size() > 0:
@@ -109,15 +104,14 @@ class SetOfStacks():
             else:
                 print("Stack is empty. ")
                 return None
-    
-    
+
     def popAt(self,j):
         if self.stackList[j].size() > 0:
             return self.stackList[j].pop()
         else:
             print("Stack is empty at index:", j)
-        
-#   --------------------------------------------------------------------------
+
+
 
 
 
