@@ -1,13 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Created on Wed Mar 20 20:29:17 2019
 
-@author: illuminatus
-"""
+# Basic Stacks and Queues:
 
-class myStack():
-    
+
+class MyStack:
     def __init__(self):
         self.data = []
         
@@ -16,12 +13,11 @@ class myStack():
             return self.data.pop()
         else:
             print("Stack empty.")
-            return
     
-    def push(self,val):
+    def push(self, val):
         return self.data.append(val)
     
-    def top(self):
+    def peek(self):
         if len(self.data) > 0:
             return self.data[-1]
         else:
@@ -30,17 +26,43 @@ class myStack():
     
     def size(self):
         return len(self.data)
-    
-    def TNprint(self):
-        for node in self.data:
-            if node:
-                print (node.val)
-            else:
-                print(None)
+
+    def is_empty(self):
+        return len(self.data) == 0
+
+    def print(self):
+        print(" {} <-- top ".format(self.data))
 
 
-class StackWMin():
-    
+class MyQueue:
+    def __init__(self):
+        self.data = []
+
+    def enq(self, val):
+        self.data.append(val)
+
+    def deq(self):
+        if not self.is_empty():
+            return self.data.pop(0)
+
+    def is_empty(self):
+        return len(self.data) == 0
+
+    def peek(self):
+        if not self.is_empty():
+            return self.data[0]
+
+    def size(self):
+        return len(self.data)
+
+    def print(self):
+        print(" top -->{} ".format(self.data))
+
+
+# Stacks with specific functions
+
+
+class StackWMin:
     def __init__(self):
         self.data = []
         self.min = []
@@ -57,10 +79,10 @@ class StackWMin():
     def push(self, val):
         if len(self.data) == 0:
             self.min.append(val)
-            return self.data.append(val)
+            self.data.append(val)
         else:
             self.min.append(min(val,self.min[-1]))
-            return self.data.append(val)
+            self.data.append(val)
     
     def top(self):
         if len(self.data) > 0:
@@ -69,58 +91,84 @@ class StackWMin():
             print("Stack empty.")
             return None
     
-    def min_(self):
+    def min(self):
         if len(self.data) > 0:
             return self.min[-1]
         else:
             print("Stack empty.")
-            return None
 
-#   --------------------------------------------------------------------------
 
-class SetOfStacks():
-    
-    def __init__(self,maxSize):
-        self.stackList = [myStack()]
-        self.maxSize = maxSize
-        self.indx = 0
+class SetOfStacks:
+    def __init__(self, max_size):
+        self.outer_stack = [MyStack()]
+        self.max_size = max_size
 
     def push(self, val):
-        if self.stackList[self.indx].size() < self.maxSize:
-            self.stackList[self.indx].push(val)
+        if self.outer_stack[-1].size() < self.max_size:
+            self.outer_stack[-1].push(val)
         else:
-            self.stackList.append(myStack())
-            self.indx += 1
-            self.stackList[self.indx].push(val)
+            self.outer_stack.append(MyStack())
+            self.outer_stack[-1].push(val)
 
     def pop(self):
-        
-        if self.stackList[self.indx].size() > 0:
-            return self.stackList[self.indx].pop()
+        if not self.outer_stack[-1].is_empty():
+            ans = self.outer_stack[-1].pop()
+            if self.outer_stack[-1].is_empty() and len(self.outer_stack) > 1:
+                self.outer_stack.pop()
+            return ans
         else:
-            if self.indx > 0:
-                self.indx -= 1
-                return self.stackList[self.indx].pop()
-            else:
-                print("Stack is empty. ")
-                return None
+            print("Stack empty.")
 
-    def popAt(self,j):
-        if self.stackList[j].size() > 0:
-            return self.stackList[j].pop()
+    def pop_at(self, j):
+        if len(self.outer_stack) < j:
+            ans = self.outer_stack[j].pop()
+            if self.outer_stack[j].is_empty():
+                self.outer_stack.pop(j)
+            return ans
         else:
-            print("Stack is empty at index:", j)
+            print("Stack is empty at index {}.".format(j))
 
 
+class QViaStacks:
+    def __init__(self):
+        self.ss = MyStack()
+        self.sq = MyStack()
+        self.qmode = False
 
-
-
-
+    def transfer(self, s1, s2):
+        while not s1.is_empty():
+            s2.push(s1.pop())
+        self.qmode = not self.qmode
     
+    def enq(self, val):
+        if not self.qmode:
+            self.ss.push(val)
+        else:
+            self.transfer(self.sq, self.ss)
+            self.ss.push(val)
+
+    def deq_basic(self):
+        if not self.sq.is_empty():
+            return self.sq.pop()
+        else:
+            print("Queue is empty.")
+
+    def deq(self):
+        if self.qmode:
+            return self.deq_basic()
+        else:
+            self.transfer(self.ss, self.sq)
+            return self.deq_basic()
     
-        
-          
-        
-        
-        
+    def peek_basic(self):
+        if self.sq.is_empty():
+            print("Queue is empty.")
+        else:
+            return self.sq.peek()
     
+    def peek(self):
+        if self.qmode:
+            return self.sq.peek()
+        else:
+            self.transfer(self.ss, self.sq)
+            return self.sq.peek()

@@ -2,95 +2,95 @@
 # -*- coding: utf-8 -*-
 
 
-class ListNode:
+class SLLNode:
     def __init__(self, data, pnext = None):
-        self.data = data
+        self.val = data
         self.next = pnext
 
 
 class SLL:
     def __init__(self):
         self.head = None
-        self.len = 0
 
-    def __setlen__(self):
+    def get_len(self):
         if self.head is None:
-            self.len = 0
+            return 0
 
         current = self.head
         ctr = 0
         while current is not None:
             ctr += 1
             current = current.next
-        self.len = ctr
+        return ctr
 
-    def print_(self):
+    def print(self):
         curr = self.head
+        arr = []
         while curr is not None:
-            print(curr.data)
+            arr.append(curr.val)
             curr = curr.next
+        print(arr)
 
-    def add_node(self, data, pos):
+    def add_node(self, data, pos=-1):
         # Node that position starts from 1, not 0.
-        node = ListNode(data)
+        node = SLLNode(data)
+        if pos == -1 and self.head is None:
+            pos = 1
+
         if pos == 1:
             node.next = self.head
             self.head = node
-            self.len += 1
-        elif pos > self.len + 1:
-            print("Position larger than linked list length")
+        elif pos == -1:
+            current = self.head
+            while current.next is not None:
+                current = current.next
+            current.next = node
         else:
             ctr = 1
             current = self.head
-            while current.next is not None and ctr < pos - 1:
+            while current is not None and ctr < pos - 1:
                 current = current.next
                 ctr += 1
-            node.next = current.next
-            current.next = node
-            self.len += 1
+            if current:
+                node.next = current.next
+                current.next = node
+            else:
+                print("Out of range.")
 
-    def delete_node(self, pos):
+    def delete_node(self, pos=-1):
         current = self.head
-        prev = None
-        if self.len == 0:
+        if current is None:
             print("SLL empty.")
             return
+        if pos == -1 and current.next is None:
+            pos = 1
+
         if pos == 1:
             self.head = current.next
-            self.len -= 1
             del current
-            return
-        if pos > self.len:
-            print("Out of range.")
-            return
-        ctr = 1
-        while current is not None and ctr < pos:
-            prev = current
-            current = current.next
-            ctr += 1
-        prev.next = current.next
-        self.len -= 1
-        del current
+        elif pos == -1:
+            while current.next.next is not None:
+                current = current.next
+            del current.next
+            current.next = None
+        else:
+            ctr = 1
+            while current.next is not None and ctr < pos-1:
+                current = current.next
+                ctr += 1
+            if current.next:
+                temp = current.next
+                current.next = current.next.next
+                del temp
+            else:
+                print("Out of range.")
 
-    def assign(self, node):
-        """
-        In cases where we have created a SLL manually by connecting nodes, this assigns 
-        such a SLL to the class. Simply stating SLL.head = node requires calling setLen externally,
-        this function has been written to package that with assignment. 
-        """
-        self.head = node
-        self.__setlen__()
-
-    def create_sll(self, arr):
-        pos = 1
+    def create_from_arr(self, arr):
         for val in arr:
-            self.add_node(val, pos)
-            pos += 1
+            self.add_node(val)
 
     def __rev_iter__(self, head):
-        curr = head
-        prev = None
-        nxt = None
+        prev, curr = None, head
         while curr is not None:
             nxt = curr.next
             curr.next = prev
@@ -111,3 +111,19 @@ class SLL:
             self.head = self.__rev_rec__(self.head)
         else:
             self.head = self.__rev_iter__(self.head)
+
+
+class DLLNode:
+    def __init__(self, data):
+        self.val = data
+        self.next = None
+        self.prev = None
+
+
+class DLL:
+    def __init__(self):
+        self.head = None
+        self.tail = None
+
+            
+

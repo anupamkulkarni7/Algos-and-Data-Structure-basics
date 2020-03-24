@@ -7,28 +7,37 @@ Created on Sat Mar 23 18:58:57 2019
 """
 
 from collections import defaultdict
-import queue
+
 
 class Graph:
-
     def __init__(self, directed=False):
         self.graph = defaultdict(list)
         self.directed = directed
+        self.weights = dict()
+    
+    def add_vertex(self,v):
+        self.graph[v] = []
 
-    def add_edge(self, vert, adjv):
+    def add_edge(self, e, wt=1):
+        vert, adjv = e
         if self.directed:
-            self.graph[vert].append(adjv)
+            if e not in self.weights:
+                self.graph[vert].append(adjv)
+            self.weights[e] = wt
         else:
-            self.graph[vert].append(adjv)
-            self.graph[adjv].append(vert)
+            if e not in self.weights:
+                self.graph[vert].append(adjv)
+                self.graph[adjv].append(vert)
+            self.weights[e] = wt
+            self.weights[e[::-1]] = wt
 
-    def create_from_edgelist(self, edges):
-        for e in edges:
-            vert, adjv = e
-            self.add_edge(vert, adjv)
-
-    def create_from_adjlist(self, adjlist):
-        self.graph = adjlist
+    def create_from_edgelist(self, edges, weights=None):
+        if weights:
+            for e,w in zip(edges,weights):
+                self.add_edge(e,w)
+        else:
+            for e in edges:
+                self.add_edge(e)
 
     def __bfs_tree__(self, bfsq, visited, bfs_tree):
         while len(bfsq) > 0:
@@ -51,31 +60,44 @@ class Graph:
                 self.__bfs_tree__(bfsq, visited, bfs_tree)
         return bfs_tree
 
-    def __dfs_visit__(self, node, top_sort, color, dfs_tree):
+    def dfs_node(self, node, top_sort, color, dfs_tree):
 
         color[node] = 'gray'
-        for adjv in self.graph[v]:
+        for adjv in self.graph[node]:
             if color[adjv] is 'white':
                 dfs_tree[adjv] = node
-                self.__dfs_visit__(adjv, top_sort, color, dfs_tree)
+                self.dfs_node(adjv, top_sort, color, dfs_tree)
         color[node] = 'black'
         top_sort.append(node)
 
-    def dfs(self):
+    def dfs(self, vs=None):
         dfs_tree = {}
-        color = {v: 'white' for v in self.graph.keys()}
+        color = {v:'white' for v in self.graph.keys()}
         top_sort = []
-        for v in self.graph.keys():
+        if not vs:
+            vs = self.graph.keys()
+        for v in vs:
             if color[v] is 'white':
                 dfs_tree[v] = v
-                self.__dfs_visit__(v, top_sort, color, dfs_tree)
-        return dfs_tree, top_sort
+                self.dfs_node(v, top_sort, color, dfs_tree)
+        return dfs_tree, top_sort[::-1]
 
     def transpose(self):
-        
-        gt = Graph()
+        gt = Graph(self.directed)
         for v in self.graph.keys():
-            for av in self.graph[v]:
-                gt.graph[av] = v
+            gt.add_vertex(v)
+        es = self.edgelist()
+        for e in es:
+            w = self.weights[e]
+            gt.add_edge(e[::-1],w)
         
         return gt
+
+    def edgelist(self):
+        if self.directed:
+            return [(u,v) for u in self.graph.keys() for v in self.graph[u]]
+        else:
+            return [(u,v) for u in self.graph.keys() for v in self.graph[u] if u<v]
+
+
+
